@@ -12,8 +12,8 @@ import sys
 from .version import __version__
 __file__
 
-_DEFAULT_REACT_VERSION = '15.4.2'
-_REACT_VERSION_TYPES = {'15.4.2', '16.2.0'}
+_DEFAULT_REACT_VERSION = '16.4.1'
+_REACT_VERSION_TYPES = {'15.4.2', '16.2.0', '16.4.1'}
 _REACT_VERSION_TO_URLS = {
     '15.4.2': {
         'external_url': [
@@ -33,6 +33,16 @@ _REACT_VERSION_TO_URLS = {
         'relative_package_path': [
             'react@16.2.0.production.min.js',
             'react-dom@16.2.0.production.min.js'
+        ],
+    },
+    '16.4.1': {
+        'external_url': [
+            'https://unpkg.com/react@16.4.1/umd/react.production.min.js',
+            'https://unpkg.com/react-dom@16.4.1/umd/react-dom.production.min.js'
+        ],
+        'relative_package_path': [
+            'react@16.4.1.production.min.js',
+            'react-dom@16.4.1.production.min.js'
         ],
     }
 }
