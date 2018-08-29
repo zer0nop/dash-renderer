@@ -39,6 +39,9 @@ export const computePaths = createAction(ACTIONS('COMPUTE_PATHS'));
 export const setLayout = createAction(ACTIONS('SET_LAYOUT'));
 export const setAppLifecycle = createAction(ACTIONS('SET_APP_LIFECYCLE'));
 export const readConfig = createAction(ACTIONS('READ_CONFIG'));
+export const onError = createAction(ACTIONS('ON_ERROR'));
+export const resolveError = createAction(ACTIONS('RESOLVE_ERROR'));
+
 
 export function hydrateInitialOutputs() {
     return function (dispatch, getState) {
@@ -131,6 +134,26 @@ export function undo() {
     }
 }
 
+
+export function revert() {
+    return function (dispatch, getState) {
+        const history = getState().history;
+        dispatch(createAction('REVERT')());
+        const previous = history.past[history.past.length - 1];
+
+        // Update props
+        dispatch(createAction('UNDO_PROP_CHANGE')({
+            itempath: getState().paths[previous.id],
+            props: previous.props
+        }));
+
+        // Notify observers
+        dispatch(notifyObservers({
+            id: previous.id,
+            props: previous.props
+        }));
+    }
+}
 
 
 function reduceInputIds(nodeIds, InputGraph) {
@@ -489,6 +512,10 @@ function updateOutput(
         body: JSON.stringify(payload)
     }).then(function handleResponse(res) {
 
+        if (!res.ok) {
+            throw res;
+        }
+
         const getThisRequestIndex = () => {
             const postRequestQueue = getState().requestQueue;
             const thisRequestIndex = findIndex(
@@ -742,6 +769,8 @@ function updateOutput(
             }
 
         });
+    }).catch(err => {
+      err.text().then(text => {dispatch(onError(text))});
     });
 
 }
